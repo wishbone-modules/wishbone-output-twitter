@@ -1,19 +1,28 @@
 language: python
 python:
-  - "3.6"
+- '3.6'
 install:
-  - python setup.py install
-  - pip install pytest
-
+- python setup.py install
+- pip install pytest
 script:
-  - pytest -s -v tests/default.py
-
+- pytest -s -v tests/default.py
 after_success:
-  - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-  - export REPO=smetj/wishbone-output-twitter
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-  - docker build -f Dockerfile -t $REPO:$TRAVIS_COMMIT --build-arg branch=$TRAVIS_BRANCH .
-  - docker tag $REPO:$TRAVIS_COMMIT $REPO:$TAG
-  - docker tag $REPO:$TRAVIS_COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
-  - docker push $REPO:$TAG
-  - docker push $REPO:$TRAVIS_COMMIT
+- docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+- export REPO=smetj/wishbone-output-twitter
+- export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH
+  ; fi`
+- docker build -f Dockerfile -t $REPO:$TRAVIS_COMMIT --build-arg branch=$TRAVIS_BRANCH
+  .
+- docker tag $REPO:$TRAVIS_COMMIT $REPO:$TAG
+- docker tag $REPO:$TRAVIS_COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+- docker push $REPO:$TAG
+- docker push $REPO:$TRAVIS_COMMIT
+notifications:
+  webhooks:
+    urls:
+    - secure: AcP/InYSjvobXHlMp5yzv93+GVmN/HuYKfCKFViQyJpTGZynqa5br1J3llf5TkkqRR4xnKEGB+LAFFAkNcrN66nmnEYJe3f/CQNpR71grpkedluPbOkV0bX0Qj41Gj/nF+FpUB3/ahkNxQcbMiObxODe/bh2Esl1gCRhMqqfrJW8akN0j5JE+C0DD38Rrdh1ugc+Y2OTbkzevcyJgN9iTsaUKVFuLUPFUskprs6c1sEaRw18DPgIXBkozNcNS7YoQpn0S8EnyRKM7MO8JVBZLdkWMUbciLydkML9TJm04JZG7YkGJsLHHgBciLQR8e1DxzaTAuKt4HH79PtyQwMu3Ec+EEmKrxtZxulO5BG+VIY3vmP21XZsW9rreDtIEyIVMVK70vZ8lpO7KSsYFZAITX+x1IILPnNNryglEJgTfHS6T2CF8sZ6SuWNjs9EIY+quy5PdaT55rPgdHYd1pZ4i0mhO83mGy93C0Nb+Tn+5orb77+YU98FfiGPU2yMBxz1Z9k2XFxrAvQZTCN1xMwkZhzLWlcSuHFeH++HaPhpJHv7xJVnp+gW0HgqINS5rWRvirlqAfiHjln8daWQ5bSxVx5930X7hqeIAhSWhBco0sPZH932HnZMfgAMMj6VMZbqgNaBMCREOVt7UQJ915hYMYXngRQzuhNKjr7jvaMFxJE=
+    on_success: always
+    on_failure: always
+    on_start: always
+    on_cancel: always
+    on_error: always
